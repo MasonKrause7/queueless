@@ -21,23 +21,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ handleLoginAttempt }) => {
         const password = formData.get("passwordLogin") as string;
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password
             });
-            if (data.user !== null && data.session !== null){
-                console.log(`successfully logged in ${data.user.user_metadata.first_name}`);
-                if (data.user.user_metadata.is_manager){
-                    navigate('/manage');
+            if (authData.user !== null && authData.session !== null){
+                console.log(`successfully logged in ${authData.user.user_metadata.first_name}`);
+                const { data: userData, error: userError } = await supabase.from("user").select();
+                if (userData){
+                    if (userData[0].isManager === true){
+                        const manager = userData[0];
+                        navigate('/manage', { state: { manager }});
+                    }
+                    else {
+                        const employee = userData[0];
+                        navigate('/cook', { state: { employee }});
+                    }
                 }
-                else{
-                    navigate('/cook');
-                }
+                
             }
-            else if (error !== null){
-                console.log(`Error logging in that user: ${error.code}`);
+            else if (authError !== null){
+                console.log(`Error logging in that user: ${authError.code}`);
                 //add specific error handling depending on error.code
-                if (error.code === 'invalid_credentials'){
+                if (authError.code === 'invalid_credentials'){
                     loginErrorNotification.innerText = "Invalid credentials. Check your email and password and try again."
                 }
                 else{

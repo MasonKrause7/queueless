@@ -18,7 +18,7 @@ function TruckManagement(){
             try{
                 const { data } = await supabase.from('truck').select()
                 if (data){
-                    const truckList: Truck[] = data.map(truck => ({
+                    const truckList: Truck[] = data.map((truck: Truck) => ({
                         truck_id: truck.truck_id,
                         truck_name: truck.truck_name,
                         image_path: truck.image_path,

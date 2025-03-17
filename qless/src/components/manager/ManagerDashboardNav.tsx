@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import '../../styles/manager/managerDashboard.css';
 
+type Manager = {
+    
+}
 
 type ManagerDashboardNavProps = {
+    manager: Manager,
     setVisibleMenu: React.Dispatch<React.SetStateAction<string>>;
 }
 
